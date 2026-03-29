@@ -1,4 +1,4 @@
-import { Book, CreateBookRequest } from "../types";
+import { Book, CreateBookRequest, UpdateBookRequest } from "../types";
 
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -43,4 +43,41 @@ export async function createBook(data: CreateBookRequest): Promise<Book> {
   }
 
   return response.json();
+}
+
+export async function getBookById(id: number): Promise<Book> {
+  const response = await fetch(`${API_URL}/books/${id}`, {
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error("Livro não encontrado");
+  }
+
+  return response.json();
+}
+
+export async function updateBook(id: number, data: UpdateBookRequest): Promise<Book> {
+  const response = await fetch(`${API_URL}/books/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Erro ao atualizar livro");
+  }
+
+  return response.json();
+}
+
+export async function deleteBook(id: number): Promise<void> {
+  const response = await fetch(`${API_URL}/books/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("Erro ao excluir livro");
+  }
 }

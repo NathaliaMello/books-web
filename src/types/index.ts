@@ -21,3 +21,10 @@ export interface CreateBookRequest {
   rating: number | null;
   categoryIds: number[];
 }
+
+export interface UpdateBookRequest {
+  title: string;
+  author: string;
+  rating: number | null;
+  categoryIds: number[];
+}
