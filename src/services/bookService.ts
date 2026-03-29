@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { Book, CreateBookRequest, UpdateBookRequest } from "../types";
 
 
@@ -50,8 +51,12 @@ export async function getBookById(id: number): Promise<Book> {
     cache: "no-store",
   });
 
+  if (response.status === 404) {
+    notFound(); 
+  }
+
   if (!response.ok) {
-    throw new Error("Livro não encontrado");
+    throw new Error("Erro ao buscar livro");
   }
 
   return response.json();

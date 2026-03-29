@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { Category } from "../types";
 
 
@@ -15,7 +16,15 @@ export async function getCategoryById(id: number): Promise<Category> {
   const response = await fetch(`${API_URL}/categories/${id}`, {
     cache: "no-store",
   });
-  if (!response.ok) throw new Error("Categoria não encontrada");
+
+  if (response.status === 404) {
+    notFound();
+  }
+
+  if (!response.ok) {
+    throw new Error("Erro ao buscar categoria");
+  }
+
   return response.json();
 }
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Navbar from "../components/Organism/Navbar";
 
 export const metadata: Metadata = {
   title: "Books API",
@@ -14,6 +15,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className="bg-gray-100 min-h-screen">
+        <Navbar />
         {children}
       </body>
     </html>
