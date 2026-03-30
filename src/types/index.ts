@@ -28,3 +28,20 @@ export interface UpdateBookRequest {
   rating: number | null;
   categoryIds: number[];
 }
+
+export interface CursorPageResponse<T> {
+  content: T[];
+  nextCursor: number | null;
+  hasNext: boolean;
+  size: number;
+}
+
+export interface PageResponse<T> {
+  content: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  last: boolean;
+}

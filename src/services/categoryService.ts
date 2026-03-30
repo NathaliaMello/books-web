@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { Category } from "../types";
+import { Category, PageResponse } from "../types";
 
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -59,4 +59,16 @@ export async function deleteCategory(id: number): Promise<void> {
     method: "DELETE",
   });
   if (!response.ok) throw new Error("Erro ao excluir categoria");
+}
+
+export async function getCategoriesPaginated(
+  page: number = 0,
+  size: number = 10
+): Promise<PageResponse<Category>> {
+  const response = await fetch(
+    `${API_URL}/categories/paginated?page=${page}&size=${size}`,
+    { cache: "no-store" }
+  );
+  if (!response.ok) throw new Error("Erro ao buscar categorias");
+  return response.json();
 }

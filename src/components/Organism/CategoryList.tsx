@@ -3,11 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Category } from "@/src/types";
+import { Category, PageResponse } from "@/src/types";
 import { deleteCategory } from "@/src/services/categoryService";
+import Pagination from "../atoms/Pagination";
 
 interface CategoryListProps {
-  categories: Category[];
+  initialData: PageResponse<Category>;
 }
 
 function CategoryCard({ category }: { category: Category }) {
@@ -58,8 +59,24 @@ function CategoryCard({ category }: { category: Category }) {
   );
 }
 
-export default function CategoryList({ categories }: CategoryListProps) {
-  if (categories.length === 0) {
+export default function CategoryList({ initialData }: CategoryListProps) {
+  const [data, setData] = useState(initialData);
+  const [loading, setLoading] = useState(false);
+
+  async function handlePageChange(newPage: number) {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/categories/paginated?page=${newPage}&size=${initialData.size}`
+      );
+      const result = await response.json();
+      setData(result);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (data.content.length === 0) {
     return (
       <p className="text-sm text-gray-400 text-center py-10">
         Nenhuma categoria cadastrada.
@@ -68,10 +85,19 @@ export default function CategoryList({ categories }: CategoryListProps) {
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      {categories.map((category) => (
-        <CategoryCard key={category.id} category={category} />
-      ))}
+    <div>
+      <div className={`flex flex-col gap-3 ${loading ? "opacity-50" : ""}`}>
+        {data.content.map((category) => (
+          <CategoryCard key={category.id} category={category} />
+        ))}
+      </div>
+
+      <Pagination
+        page={data.page}
+        totalPages={data.totalPages}
+        onNext={() => handlePageChange(data.page + 1)}
+        onPrev={() => handlePageChange(data.page - 1)}
+      />
     </div>
   );
 }

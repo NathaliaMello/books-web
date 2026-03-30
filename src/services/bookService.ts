@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { Book, CreateBookRequest, UpdateBookRequest } from "../types";
+import { Book, CreateBookRequest, CursorPageResponse, UpdateBookRequest } from "../types";
 
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -85,4 +85,27 @@ export async function deleteBook(id: number): Promise<void> {
   if (!response.ok) {
     throw new Error("Erro ao excluir livro");
   }
+}
+
+export async function getBooksCursor(
+  cursor?: number,
+  size: number = 6,
+  title?: string,
+  author?: string,
+  categoryId?: number
+): Promise<CursorPageResponse<Book>> {
+  const query = new URLSearchParams();
+  query.append("size", String(size));
+  if (cursor) query.append("cursor", String(cursor));
+  if (title) query.append("title", title);
+  if (author) query.append("author", author);
+  if (categoryId) query.append("categoryId", String(categoryId));
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/books/cursor?${query.toString()}`,
+    { cache: "no-store" }
+  );
+
+  if (!response.ok) throw new Error("Erro ao buscar livros");
+  return response.json();
 }

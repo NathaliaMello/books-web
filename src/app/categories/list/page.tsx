@@ -1,10 +1,10 @@
 
 import CategoryList from "@/src/components/Organism/CategoryList";
-import { getCategories } from "@/src/services/categoryService";
+import { getCategoriesPaginated } from "@/src/services/categoryService";
 import Link from "next/link";
 
 export default async function CategoriesListPage() {
-  const categories = await getCategories();
+  const data = await getCategoriesPaginated(0, 10);
 
   return (
     <main className="max-w-2xl mx-auto mt-10 p-6">
@@ -18,7 +18,7 @@ export default async function CategoriesListPage() {
         </Link>
       </div>
 
-      <CategoryList categories={categories} />
+      <CategoryList initialData={data} />
     </main>
   );
 }
