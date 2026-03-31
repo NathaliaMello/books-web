@@ -1,4 +1,6 @@
 import Badge from "@/src/components/atoms/Badge";
+import BookActions from "@/src/components/Organism/BookActions";
+import BookRating from "@/src/components/Organism/BookRating";
 import DeleteBookButton from "@/src/components/Organism/DeleteBookButton";
 import { getBookById } from "@/src/services/bookService";
 import Link from "next/link";
@@ -39,9 +41,14 @@ export default async function BookDetailPage({
             ))}
           </div>
           {book.rating && (
-            <span className="text-base font-medium text-amber-500">
-              ★ {book.rating}
-            </span>
+            <div className="flex flex-col items-end gap-1">
+              <span className="text-base font-medium text-amber-500">
+                ★ {book.rating}
+              </span>
+              <span className="text-xs text-gray-400">
+                {book.ratingCount} {book.ratingCount === 1 ? "avaliação" : "avaliações"}
+              </span>
+            </div>
           )}
         </div>
 
@@ -58,15 +65,11 @@ export default async function BookDetailPage({
           <p className="text-xs text-gray-400">ISBN: {book.isbn}</p>
         )}
 
-        {/* Ações */}
+        {/* Avaliação — visível para todos, interativo só para autenticados */}
+        <BookRating bookId={book.id} currentRating={book.rating} />  
+
         <div className="flex gap-3 pt-2 border-t border-gray-100">
-          <Link
-            href={`/books/${book.id}/edit`}
-            className="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg px-4 py-2 transition-colors"
-          >
-            Editar
-          </Link>
-          <DeleteBookButton bookId={book.id} />
+          <BookActions bookId={book.id} />
         </div>
 
       </div>

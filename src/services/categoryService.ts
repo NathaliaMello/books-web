@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Category, PageResponse } from "../types";
+import { authHeaders } from "./api";
 
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -31,7 +32,7 @@ export async function getCategoryById(id: number): Promise<Category> {
 export async function createCategory(name: string): Promise<Category> {
   const response = await fetch(`${API_URL}/categories`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders(),
     body: JSON.stringify({ name }),
   });
   if (!response.ok) {
@@ -44,7 +45,7 @@ export async function createCategory(name: string): Promise<Category> {
 export async function updateCategory(id: number, name: string): Promise<Category> {
   const response = await fetch(`${API_URL}/categories/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders(),
     body: JSON.stringify({ name }),
   });
   if (!response.ok) {
@@ -57,6 +58,7 @@ export async function updateCategory(id: number, name: string): Promise<Category
 export async function deleteCategory(id: number): Promise<void> {
   const response = await fetch(`${API_URL}/categories/${id}`, {
     method: "DELETE",
+    headers: authHeaders(),
   });
   if (!response.ok) throw new Error("Erro ao excluir categoria");
 }

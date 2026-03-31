@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Book, CreateBookRequest, CursorPageResponse, UpdateBookRequest } from "../types";
+import { authHeaders } from "./api";
 
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -34,7 +35,7 @@ export async function getBooks(params?: {
 export async function createBook(data: CreateBookRequest): Promise<Book> {
   const response = await fetch(`${API_URL}/books`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders(),
     body: JSON.stringify(data),
   });
 
@@ -65,7 +66,7 @@ export async function getBookById(id: number): Promise<Book> {
 export async function updateBook(id: number, data: UpdateBookRequest): Promise<Book> {
   const response = await fetch(`${API_URL}/books/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders(),
     body: JSON.stringify(data),
   });
 
@@ -80,6 +81,7 @@ export async function updateBook(id: number, data: UpdateBookRequest): Promise<B
 export async function deleteBook(id: number): Promise<void> {
   const response = await fetch(`${API_URL}/books/${id}`, {
     method: "DELETE",
+    headers: authHeaders(),
   });
 
   if (!response.ok) {
@@ -108,4 +110,35 @@ export async function getBooksCursor(
 
   if (!response.ok) throw new Error("Erro ao buscar livros");
   return response.json();
+}
+
+export async function rateBook(id: number, rating: number): Promise<Book> {
+  const response = await fetch(`${API_URL}/books/${id}/rating`, {
+    method: "PATCH",
+    headers: authHeaders(),
+    body: JSON.stringify({ rating }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Erro ao avaliar livro");
+  }
+
+  return response.json();
+}
+
+export async function getMyRating(bookId: number): Promise<number | null> {
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+
+  const response = await fetch(`${API_URL}/books/${bookId}/rating/me`, {
+    headers: authHeaders(),
+    cache: "no-store",
+  });
+
+  if (response.status === 204) return null;
+  if (!response.ok) return null;
+
+  const data = await response.json();
+  return Number(data.rating);
 }

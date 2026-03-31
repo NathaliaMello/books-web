@@ -10,6 +10,7 @@ export interface Book {
   isbn: string | null;
   description: string | null;
   rating: number | null;
+  ratingCount: number;
   categories: Category[];
   createdAt: string;
 }
@@ -44,4 +45,22 @@ export interface PageResponse<T> {
   totalPages: number;
   first: boolean;
   last: boolean;
+}
+
+export interface AuthResponse {
+  token: string;
+  name: string;
+  email: string;
+  role: "ADMIN" | "USER";
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegisterRequest {
+  name: string;
+  email: string;
+  password: string;
 }
